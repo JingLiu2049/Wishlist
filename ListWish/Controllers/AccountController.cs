@@ -37,9 +37,11 @@ namespace ListWish.Controllers
             {
                 return BadRequest("Username or password incorrect");
             }
+            user.JWTTokenVersion++;
+            await userManager.UpdateAsync(user);
             var claims = new List<Claim>();
-            var idClaim = new Claim(ClaimTypes.NameIdentifier, user.Id.ToString());
-            claims.Add(idClaim);
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+            claims.Add(new Claim(ClaimTypes.Version, user.JWTTokenVersion.ToString()));
             var roles = await userManager.GetRolesAsync(user);
             foreach(var role in roles)
             {
